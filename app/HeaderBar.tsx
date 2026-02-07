@@ -43,9 +43,30 @@ function MoonIcon({ className }: { className?: string }) {
   );
 }
 
+const THEME_CYCLE: Array<"auto" | "light" | "dark"> = ["auto", "light", "dark"];
+
+function getNextTheme(current: "auto" | "light" | "dark"): "auto" | "light" | "dark" {
+  const i = THEME_CYCLE.indexOf(current);
+  return THEME_CYCLE[(i + 1) % THEME_CYCLE.length];
+}
+
+function getThemeButtonTitle(theme: "auto" | "light" | "dark", effectiveIsDark: boolean): string {
+  if (theme === "auto") {
+    return effectiveIsDark
+      ? "Mode auto (nuit). Cliquer pour changer"
+      : "Mode auto (jour). Cliquer pour changer";
+  }
+  if (theme === "dark") return "Mode nuit. Cliquer : mode auto";
+  return "Mode jour. Cliquer : mode nuit";
+}
+
 export default function HeaderBar() {
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
+  const { theme, effectiveTheme, setTheme } = useTheme();
+  const effectiveIsDark = effectiveTheme === "dark";
+
+  const handleCycle = () => {
+    setTheme(getNextTheme(theme as "auto" | "light" | "dark"));
+  };
 
   return (
     <header className="header">
@@ -53,11 +74,11 @@ export default function HeaderBar() {
       <button
         type="button"
         className="themeToggle"
-        onClick={() => setTheme(isDark ? "light" : "dark")}
-        title={isDark ? "Passer en mode clair" : "Passer en mode sombre"}
-        aria-label={isDark ? "Passer en mode clair" : "Passer en mode sombre"}
+        onClick={handleCycle}
+        title={getThemeButtonTitle(theme as "auto" | "light" | "dark", effectiveIsDark)}
+        aria-label={getThemeButtonTitle(theme as "auto" | "light" | "dark", effectiveIsDark)}
       >
-        {isDark ? (
+        {effectiveIsDark ? (
           <SunIcon className="themeToggleIcon" />
         ) : (
           <MoonIcon className="themeToggleIcon" />

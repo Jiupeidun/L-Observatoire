@@ -6,6 +6,13 @@ import HeaderBar from "./HeaderBar";
 const PDF_URL =
   `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/tcf-canada-cheatsheets.pdf`;
 
+const TCF_TOOLS: { label: string; url: string }[] = [
+  { label: "ChatGPT", url: "https://chatgpt.com" },
+  { label: "Gemini", url: "https://gemini.com" },
+  { label: "Luvvoice", url: "https://luvvoice.com/" },
+  { label: "Google Translate", url: "https://translate.google.com/" },
+];
+
 export default function Home() {
   return (
     <>
@@ -59,6 +66,18 @@ export default function Home() {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="tcfToolsSection">
+              <h3 className="tcfToolsTitle">Outils de préparation</h3>
+              <ul className="tcfToolsList">
+                {TCF_TOOLS.map(({ label, url }) => (
+                  <li key={url}>
+                    <a href={url} target="_blank" rel="noopener noreferrer" className="tcfToolLink">
+                      {label} →
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </section>
