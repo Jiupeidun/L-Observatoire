@@ -10,8 +10,32 @@
   --accent-hover: #0077ed;
   --shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
   --radius: 16px;
+  --color-positive: #c53929;
+  --color-negative: #0d7d3d;
+  --color-positive-bg: rgba(197, 57, 41, 0.08);
+  --weekend-glass-bg: rgba(255, 255, 255, 0.28);
+  --weekend-glass-border: rgba(255, 255, 255, 0.4);
+  --countdown-digit-bg: #e8e8ed;
   /* Police Apple : SF Pro sur macOS/iOS, Segoe UI sur Windows */
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Helvetica", "Segoe UI", sans-serif;
+}
+
+/* Mode sombre */
+[data-theme="dark"] {
+  --bg: #1c1c1e;
+  --card: #2c2c2e;
+  --text: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --border: rgba(255, 255, 255, 0.12);
+  --accent: #0a84ff;
+  --accent-hover: #409cff;
+  --shadow: 0 2px 20px rgba(0, 0, 0, 0.35);
+  --color-positive: #ff6b6b;
+  --color-negative: #32d74b;
+  --color-positive-bg: rgba(255, 107, 107, 0.15);
+  --weekend-glass-bg: rgba(44, 44, 46, 0.72);
+  --weekend-glass-border: rgba(255, 255, 255, 0.15);
+  --countdown-digit-bg: #3a3a3c;
 }
 
 * {
@@ -49,18 +73,50 @@ a:hover {
   text-decoration: underline;
 }
 
-/* En-tête minimal */
+/* En-tête minimal — titre centré, bouton thème à droite */
 .header {
   flex-shrink: 0;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 1.25rem 1.5rem;
+  gap: 1rem;
 }
 
-.header h1 {
+.headerTitle {
+  flex: 1;
   font-size: 1.75rem;
   font-weight: 600;
   letter-spacing: -0.02em;
   color: var(--text);
+  text-align: center;
+  margin: 0;
+}
+
+.themeToggle {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.themeToggle:hover {
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--text-secondary);
+}
+
+.themeToggleIcon {
+  display: block;
 }
 
 /* Grille deux colonnes — occupe tout l'espace restant */
@@ -231,10 +287,10 @@ a:hover {
   z-index: 10;
   isolation: isolate;
   /* Fond peu couvrant pour que le flou derrière soit bien visible */
-  background: rgba(255, 255, 255, 0.28);
+  background: var(--weekend-glass-bg);
   -webkit-backdrop-filter: saturate(140%) blur(12px);
   backdrop-filter: saturate(140%) blur(12px);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 0 1px var(--weekend-glass-border);
 }
 
 .weekendGlass.weekendGlassVisible {
@@ -326,11 +382,11 @@ a:hover {
 }
 
 .marketsTable td[data-positive="true"] {
-  color: #c53929;
+  color: var(--color-positive);
 }
 
 .marketsTable td[data-negative="true"] {
-  color: #0d7d3d;
+  color: var(--color-negative);
 }
 
 .marketsLoading,
@@ -343,14 +399,14 @@ a:hover {
 }
 
 .marketsError {
-  color: #c53929;
+  color: var(--color-positive);
 }
 
 .marketsRefreshError {
   padding: 0.35rem 1.5rem;
   font-size: 0.75rem;
-  color: #c53929;
-  background: rgba(197, 57, 41, 0.08);
+  color: var(--color-positive);
+  background: var(--color-positive-bg);
   text-align: center;
 }
 
@@ -488,7 +544,7 @@ a:hover {
 /* FlapDisplay en thème clair — chiffres sur fond gris, police Apple */
 .countdownFlap.light [data-kind="digit"] {
   color: var(--text);
-  background-color: #e8e8ed;
+  background-color: var(--countdown-digit-bg);
   font-family: var(--font);
 }
 

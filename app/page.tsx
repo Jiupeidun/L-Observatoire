@@ -1,6 +1,7 @@
 import { TCF_EPREUVES_TABLE } from "./config";
 import Countdown from "./Countdown";
 import FinanceMarketsSection from "./FinanceMarketsSection";
+import HeaderBar from "./HeaderBar";
 
 const PDF_URL =
   `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/tcf-canada-cheatsheets.pdf`;
@@ -8,9 +9,7 @@ const PDF_URL =
 export default function Home() {
   return (
     <>
-      <header className="header">
-        <h1>L&apos;Observatoire</h1>
-      </header>
+      <HeaderBar />
 
       <main className="main">
         <section className="panel">
