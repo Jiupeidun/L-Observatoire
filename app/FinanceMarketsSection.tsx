@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { SHEETS_CSV_URL, SHEETS_CSV_URL_GROUPE_B } from "./config";
 import MarketsTable from "./MarketsTable";
+import WorldClocks from "./WorldClocks";
 
 const ANNUAL_REPORTS_URL = "https://jiupeidun.github.io/annualreports/";
 const TRADINGVIEW_CHART_URL =
@@ -32,7 +33,9 @@ export default function FinanceMarketsSection() {
             Finance — Marchés
           </a>
         </h2>
-        <div className="marketsTabs" role="tablist" aria-label="Groupe de données">
+        <div className="panelTitleRowRight">
+          <WorldClocks />
+          <div className="marketsTabs" role="tablist" aria-label="Groupe de données">
           <button
             type="button"
             role="tab"
@@ -51,6 +54,7 @@ export default function FinanceMarketsSection() {
           >
             Groupe B
           </button>
+          </div>
         </div>
       </div>
       <div className="panelContent panelContentFinance">

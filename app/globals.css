@@ -186,6 +186,59 @@ a:hover {
   border-bottom: none;
 }
 
+.panelTitleRowRight {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+/* World clocks (NY, London, HK) — flap HH:mm */
+.worldClocks {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.worldClockItem {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.worldClockLabel {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.worldClockTime {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+}
+
+.worldClockSep {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0.05rem;
+}
+
+.worldClocks [data-kind="digit"] {
+  color: var(--text);
+  background-color: var(--countdown-digit-bg);
+  font-family: var(--font);
+  font-size: 0.75rem;
+}
+.worldClocks .worldClockFlap {
+  --flap-width: 1.25rem;
+  --flap-height: 1.25rem;
+}
+
 /* Apple-style segmented control (tab) */
 .marketsTabs {
   display: inline-flex;
