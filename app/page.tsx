@@ -1,10 +1,6 @@
 import { TCF_DOCS_LINKS } from "./config";
 import Countdown from "./Countdown";
-import MarketsTable from "./MarketsTable";
-
-const ANNUAL_REPORTS_URL = "https://jiupeidun.github.io/annualreports/";
-const TRADINGVIEW_CHART_URL =
-  "https://www.tradingview.com/chart/tUkFEiQd/?symbol=SP%3ASPX";
+import FinanceMarketsSection from "./FinanceMarketsSection";
 
 export default function Home() {
   return (
@@ -16,25 +12,7 @@ export default function Home() {
       <main className="main">
         {/* Colonne gauche : Finance - Marchés */}
         <section className="panel">
-          <h2 className="panelTitle">
-            <a
-              href={TRADINGVIEW_CHART_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="panelTitleLink"
-            >
-              Finance — Marchés
-            </a>
-          </h2>
-          <div className="panelContent panelContentTwoIframes">
-            <MarketsTable />
-            <div className="iframeWrap">
-              <iframe
-                src={ANNUAL_REPORTS_URL}
-                title="Rapports Financiers"
-              />
-            </div>
-          </div>
+          <FinanceMarketsSection />
         </section>
 
         {/* Colonne droite : TCF Canada */}

@@ -1,9 +1,44 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { SHEETS_CSV_URL } from "./config";
 
+export type MarketsTableProps = { csvUrl?: string };
+
 const REFRESH_INTERVAL_MS = 60 * 1000; // 60 secondes
+
+// Colonnes dans l’ordre : Symbol (col 0), Price, Change %, Market Cap, YTD
+const COL_ORDER: { key: string; index: number }[] = [
+  { key: "Symbol", index: 0 },
+  { key: "Price", index: 1 },
+  { key: "Change %", index: 2 },
+  { key: "Market Cap", index: 3 },
+  { key: "YTD", index: 4 },
+];
+
+/** True si la cellule est vide ou "—" (à trier en dernier). */
+function isBlankCell(cell: string): boolean {
+  const s = (cell ?? "").trim();
+  return !s || s === "—";
+}
+
+/** Parse une cellule pour le tri : nombre (pourcentage, T/B) ou NaN si vide. */
+function parseSortValue(key: string, cell: string): number {
+  const s = (cell ?? "").trim().replace(/,/g, "");
+  if (!s || s === "—") return NaN;
+  const withUnit = s.replace(/%/g, "");
+  const num = parseFloat(withUnit);
+  if (Number.isNaN(num)) return NaN;
+  if (key === "Market Cap") {
+    if (s.endsWith("T")) return num * 1e12;
+    if (s.endsWith("B")) return num * 1e9;
+    if (s.endsWith("M")) return num * 1e6;
+    if (s.endsWith("K")) return num * 1e3;
+  }
+  return num;
+}
+
+const NUMERIC_KEYS_WITH_COLOR = new Set(["Change %", "YTD"]);
 
 function parseCSV(text: string): string[][] {
   const lines = text.trim().split(/\r?\n/);
@@ -34,16 +69,29 @@ function isWeekend(): boolean {
 
 const WEEKEND_OVERLAY_DELAY_MS = 5000; // Afficher les données au moins 5 s avant le verre dépoli le week-end
 
-export default function MarketsTable() {
+type SortDir = "asc" | "desc";
+
+export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTableProps) {
   const [rows, setRows] = useState<string[][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [weekend, setWeekend] = useState(false);
   const [weekendOverlayVisible, setWeekendOverlayVisible] = useState(false);
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
+
+  const toggleSort = (key: string) => {
+    if (sortBy === key) {
+      setSortDir((d) => (d === "desc" ? "asc" : "desc"));
+    } else {
+      setSortBy(key);
+      setSortDir("desc");
+    }
+  };
 
   const fetchData = useCallback(() => {
     setWeekend(isWeekend());
-    fetch(SHEETS_CSV_URL)
+    fetch(csvUrl)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.text();
@@ -59,9 +107,10 @@ export default function MarketsTable() {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [csvUrl]);
 
   useEffect(() => {
+    setRows([]);
     setLoading(true);
     const w = isWeekend();
     setWeekend(w);
@@ -82,6 +131,33 @@ export default function MarketsTable() {
   const weekendMode = weekend;
   const showGlass = weekendMode && weekendOverlayVisible;
 
+  const dataRows = rows.length >= 2 ? rows.slice(1) : [];
+  const hasData = rows.length >= 2;
+
+  const sortedRows = useMemo(() => {
+    if (!sortBy || !dataRows.length) return dataRows;
+    const col = COL_ORDER.find((c) => c.key === sortBy);
+    if (!col) return dataRows;
+    const isNum = col.key !== "Symbol";
+    return [...dataRows].sort((a, b) => {
+      const aVal = a[col.index] ?? "";
+      const bVal = b[col.index] ?? "";
+      const aBlank = isBlankCell(aVal);
+      const bBlank = isBlankCell(bVal);
+      if (aBlank && bBlank) return 0;
+      if (aBlank) return 1;
+      if (bBlank) return -1;
+      if (isNum) {
+        const aNum = parseSortValue(col.key, aVal);
+        const bNum = parseSortValue(col.key, bVal);
+        const cmp = aNum - bNum;
+        return sortDir === "desc" ? -cmp : cmp;
+      }
+      const cmp = String(aVal).localeCompare(String(bVal), undefined, { numeric: true });
+      return sortDir === "desc" ? -cmp : cmp;
+    });
+  }, [dataRows, sortBy, sortDir]);
+
   if (loading && rows.length === 0 && !weekendMode) {
     return (
       <div className="marketsWrap">
@@ -98,13 +174,8 @@ export default function MarketsTable() {
     );
   }
 
-  const headers = rows.length >= 1 ? rows[0] : [];
-  const dataRows = rows.length >= 2 ? rows.slice(1) : [];
-  const hasData = rows.length >= 2;
-
   return (
     <div className="marketsWrap">
-      {/* Données marchés : toujours rendues, recouvertes par le verre dépoli le week-end */}
       <div className="marketsContent">
         {error && (
           <div className="marketsRefreshError">
@@ -119,20 +190,55 @@ export default function MarketsTable() {
             <table className="marketsTable">
               <thead>
                 <tr>
-                  {headers.map((h, i) => (
-                    <th key={i}>{h || "—"}</th>
+                  {COL_ORDER.map(({ key }) => (
+                    <th
+                      key={key}
+                      className="marketsThSortable"
+                      onClick={() => toggleSort(key)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          toggleSort(key);
+                        }
+                      }}
+                      aria-sort={
+                        sortBy === key
+                          ? sortDir === "desc"
+                            ? "descending"
+                            : "ascending"
+                          : undefined
+                      }
+                    >
+                      <span className="marketsThLabel">{key}</span>
+                      <span className="marketsThSortIcon" aria-hidden>
+                        {sortBy === key ? (sortDir === "desc" ? "↓" : "↑") : "\u00A0"}
+                      </span>
+                    </th>
                   ))}
                 </tr>
               </thead>
               <tbody>
-                {dataRows.map((row, i) => (
+                {sortedRows.map((row, i) => (
                   <tr key={i}>
-                    {headers.map((_, j) => {
+                    {COL_ORDER.map(({ key, index: j }) => {
                       const cell = row[j] ?? "";
-                      const isNegative = j >= 1 && cell.startsWith("-");
+                      const display = cell || "—";
+                      let dataSign: "positive" | "negative" | undefined;
+                      if (NUMERIC_KEYS_WITH_COLOR.has(key)) {
+                        const n = parseSortValue(key, cell);
+                        if (!Number.isNaN(n)) {
+                          dataSign = n > 0 ? "positive" : n < 0 ? "negative" : undefined;
+                        }
+                      }
                       return (
-                        <td key={j} data-negative={isNegative ? "true" : undefined}>
-                          {cell || "—"}
+                        <td
+                          key={key}
+                          data-positive={dataSign === "positive" ? "true" : undefined}
+                          data-negative={dataSign === "negative" ? "true" : undefined}
+                        >
+                          {display}
                         </td>
                       );
                     })}

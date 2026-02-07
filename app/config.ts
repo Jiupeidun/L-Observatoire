@@ -10,5 +10,8 @@ export const TCF_DOCS_LINKS: { part: string; url: string }[] = [
 export const SHEETS_CSV_URL =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQr0wuiXC5YmOA9WmTS4N1ymmHrhRVhXkiF_kS0MPZ2d3zW_YhHrSfmzUXemf4ycZaE4pF2VK90vfbN/pub?gid=0&single=true&output=csv";
 
+export const SHEETS_CSV_URL_GROUPE_B =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vQr0wuiXC5YmOA9WmTS4N1ymmHrhRVhXkiF_kS0MPZ2d3zW_YhHrSfmzUXemf4ycZaE4pF2VK90vfbN/pub?gid=262160319&single=true&output=csv";
+
 // Date de la prochaine épreuve TCF Canada (pour le compte à rebours)
 export const TCF_EXAM_DATE = "2026-04-09";
