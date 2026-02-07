@@ -8,7 +8,7 @@ const PDF_URL =
 
 const TCF_TOOLS: { label: string; url: string }[] = [
   { label: "ChatGPT", url: "https://chatgpt.com" },
-  { label: "Gemini", url: "https://gemini.com" },
+  { label: "Gemini", url: "https://gemini.google.com/app" },
   { label: "Luvvoice", url: "https://luvvoice.com/" },
   { label: "Google Translate", url: "https://translate.google.com/" },
 ];
