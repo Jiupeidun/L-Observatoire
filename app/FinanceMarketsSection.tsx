@@ -53,13 +53,17 @@ export default function FinanceMarketsSection() {
           </button>
         </div>
       </div>
-      <div className="panelContent panelContentTwoIframes">
+      <div className="panelContent panelContentFinance">
         <MarketsTable csvUrl={csvUrl} />
-        <div className="iframeWrap">
-          <iframe
-            src={ANNUAL_REPORTS_URL}
-            title="Rapports Financiers"
-          />
+        <div className="reportsLinkSection">
+          <a
+            href={ANNUAL_REPORTS_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="pdfLink"
+          >
+            Rapports Financiers →
+          </a>
         </div>
       </div>
     </>

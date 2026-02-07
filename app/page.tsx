@@ -1,6 +1,9 @@
-import { TCF_DOCS_LINKS } from "./config";
+import { TCF_EPREUVES_TABLE } from "./config";
 import Countdown from "./Countdown";
 import FinanceMarketsSection from "./FinanceMarketsSection";
+
+const PDF_URL =
+  `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/tcf-canada-cheatsheets.pdf`;
 
 export default function Home() {
   return (
@@ -10,44 +13,49 @@ export default function Home() {
       </header>
 
       <main className="main">
-        {/* Colonne gauche : Finance - Marchés */}
         <section className="panel">
           <FinanceMarketsSection />
         </section>
 
-        {/* Colonne droite : TCF Canada */}
         <section className="panel">
           <h2 className="panelTitle">TCF Canada</h2>
           <div className="panelContent">
             <div className="countdownWrap">
               <Countdown />
             </div>
-            <div className="pdfSection">
-              <iframe
-                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/tcf-canada-cheatsheets.pdf`}
-                title="Aide-mémoire TCF Canada"
-              />
+            <div className="pdfLinkSection">
+              <a
+                href={PDF_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pdfLink"
+              >
+                tcf-canada-cheatsheets.pdf →
+              </a>
             </div>
             <div className="tableSection">
-              <h3>
-                Liens vers les Google Docs par épreuve
-              </h3>
               <table className="tcfTable">
                 <thead>
                   <tr>
                     <th>Épreuve</th>
-                    <th>Document</th>
+                    <th>Durée / volume</th>
+                    <th>Détails</th>
+                    <th>Score TCF requis</th>
+                    <th>Échelle</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {TCF_DOCS_LINKS.map(({ part, url }) => (
+                  {TCF_EPREUVES_TABLE.map(({ part, url, duree, details, scoreRequis, echelle }) => (
                     <tr key={part}>
-                      <td>{part}</td>
                       <td>
                         <a href={url} target="_blank" rel="noopener noreferrer">
-                          Ouvrir le doc →
+                          {part} →
                         </a>
                       </td>
+                      <td>{duree}</td>
+                      <td className="tcfDetailsCell">{details}</td>
+                      <td>{scoreRequis}</td>
+                      <td>{echelle}</td>
                     </tr>
                   ))}
                 </tbody>
