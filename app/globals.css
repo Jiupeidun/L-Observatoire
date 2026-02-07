@@ -1,0 +1,485 @@
+/* Style minimaliste façon Apple — thème clair uniquement */
+
+:root {
+  --bg: #FFF1E5;
+  --card: #ffffff;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --border: rgba(0, 0, 0, 0.08);
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+  --radius: 16px;
+  /* Police Apple : SF Pro sur macOS/iOS, Segoe UI sur Windows */
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Helvetica", "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100vh;
+  max-height: 100vh;
+  max-width: 100vw;
+  overflow: hidden;
+  font-family: var(--font);
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--bg);
+  color: var(--text);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+/* En-tête minimal */
+.header {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 1.25rem 1.5rem;
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+/* Grille deux colonnes — occupe tout l'espace restant */
+.main {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  max-width: 100%;
+  margin: 0;
+  padding: 0 1.5rem 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Cartes façon Apple : fond blanc, ombre légère — remplissent la grille */
+.panel {
+  background: var(--card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--border);
+}
+
+.panelTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  padding: 1.25rem 1.5rem;
+  color: var(--text);
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+
+.panelTitleLink {
+  color: inherit;
+  text-decoration: none;
+}
+
+.panelTitleLink:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.panelContent {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Iframe — masquer la scrollbar visible en dépassant légèrement à droite */
+.iframeWrap {
+  flex: 1;
+  min-height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.panelContentTwoIframes .iframeWrap {
+  min-height: 180px;
+}
+
+.iframeWrap iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% + 20px);
+  height: 100%;
+  border: none;
+  margin-right: -20px;
+}
+
+/* Marchés — tableau CSV, style Apple + overlay week-end (verre dépoli) */
+.marketsWrap {
+  flex: 1;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+.marketsContent {
+  flex: 1;
+  min-height: 0;
+  max-height: 70vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Verre dépoli week-end — fond très transparent pour que le blur se voie bien */
+.weekendGlass {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  z-index: 10;
+  isolation: isolate;
+  /* Fond peu couvrant pour que le flou derrière soit bien visible */
+  background: rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: saturate(140%) blur(12px);
+  backdrop-filter: saturate(140%) blur(12px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+
+.weekendGlass.weekendGlassVisible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Au survol de la zone marchés, le verre dépoli disparaît pour laisser voir le tableau */
+.marketsWrap:hover .weekendGlass.weekendGlassVisible {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.weekendGlass .weekendMessageInner {
+  position: relative;
+}
+
+.marketsScroll {
+  flex: 1;
+  overflow: auto;
+  padding: 0 1rem;
+  min-height: 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.marketsScroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.marketsScroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.marketsScroll::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.marketsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8125rem;
+  font-family: var(--font);
+}
+
+.marketsTable th,
+.marketsTable td {
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.marketsTable th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.01em;
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 1;
+}
+
+.marketsTable td {
+  color: var(--text);
+}
+
+.marketsTable td:first-child {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.marketsTable td[data-negative="true"] {
+  color: #c53929;
+}
+
+.marketsLoading,
+.marketsError,
+.marketsEmpty {
+  padding: 1.5rem 1rem;
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.marketsError {
+  color: #c53929;
+}
+
+.marketsRefreshError {
+  padding: 0.35rem 1rem;
+  font-size: 0.75rem;
+  color: #c53929;
+  background: rgba(197, 57, 41, 0.08);
+  text-align: center;
+}
+
+/* Message week-end — sur le verre dépoli */
+.weekendMessageInner {
+  padding: 1.5rem 1.25rem;
+  text-align: center;
+}
+
+.weekendGlassVisible .weekendMessageInner {
+  animation: weekendPop 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) both;
+}
+
+@keyframes weekendPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.weekendText {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  margin: 0 0 0.25rem;
+}
+
+.weekendSub {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Compte à rebours TCF — style tableau d'aéroport (noir & blanc) */
+.countdownWrap {
+  flex-shrink: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.countdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  background: var(--card);
+  color: var(--text);
+  padding: 1rem 1.25rem;
+  font-family: var(--font);
+  font-variant-numeric: tabular-nums;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Grille : heure à gauche, compte à rebours à droite */
+.countdownGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  align-items: start;
+}
+
+@media (max-width: 600px) {
+  .countdownGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.countdownCol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.countdownLabel {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.countdownRow {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.countdownBlock {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+}
+
+.countdownNumber {
+  font-size: 1.375rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+.countdownUnit {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.countdownPassed .countdownDone {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+/* Solari / Split-Flap : séparateurs J et : entre les chiffres */
+.countdownFlapRow {
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.countdownSep {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+  margin: 0 0.1rem;
+}
+
+/* FlapDisplay en thème clair — chiffres sur fond gris, police Apple */
+.countdownFlap.light [data-kind="digit"] {
+  color: var(--text);
+  background-color: #e8e8ed;
+  font-family: var(--font);
+}
+
+/* Zone PDF TCF — intégrée au panneau, scrollbar masquée */
+.pdfSection {
+  flex: 1;
+  min-height: 200px;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+  overflow: hidden;
+}
+
+.pdfSection iframe,
+.pdfSection object {
+  width: calc(100% + 20px);
+  max-width: calc(100% + 20px);
+  height: 100%;
+  min-height: 200px;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--card);
+  margin-right: -20px;
+  box-shadow: none;
+}
+
+/* Table TCF — épurée */
+.tableSection {
+  padding: 1.25rem 1.5rem;
+}
+
+.tableSection h3 {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.tcfTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.tcfTable th,
+.tcfTable td {
+  padding: 0.625rem 0;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+.tcfTable th {
+  color: var(--text-secondary);
+  font-weight: 500;
+  font-size: 0.8125rem;
+}
+
+.tcfTable td:first-child {
+  color: var(--text);
+  font-weight: 500;
+}
+
+.tcfTable a {
+  word-break: break-all;
+}
+
+.tcfTable tbody tr:last-child td {
+  border-bottom: none;
+}
