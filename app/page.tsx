@@ -46,7 +46,7 @@ export default function Home() {
             </div>
             <div className="pdfSection">
               <iframe
-                src="/tcf-canada-cheatsheets.pdf"
+                src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/tcf-canada-cheatsheets.pdf`}
                 title="Aide-mémoire TCF Canada"
               />
             </div>
