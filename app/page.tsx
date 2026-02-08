@@ -1,11 +1,12 @@
-import { TCF_EPREUVES_TABLE } from "./config";
-import Countdown from "./Countdown";
-import FinanceMarketsSection from "./FinanceMarketsSection";
-import HeaderBar from "./HeaderBar";
+import { TCF_EPREUVES_TABLE } from "./lib/config";
+import Countdown from "./components/Countdown";
+import FinanceMarketsSection from "./components/FinanceMarketsSection";
+import HeaderBar from "./components/HeaderBar";
 
 const PDF_URL =
   `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/tcf-canada-cheatsheets.pdf`;
 
+/** Liens « Outils de préparation » TCF. */
 const TCF_TOOLS: { label: string; url: string }[] = [
   { label: "ChatGPT", url: "https://chatgpt.com" },
   { label: "Gemini", url: "https://gemini.google.com/app" },
@@ -14,6 +15,7 @@ const TCF_TOOLS: { label: string; url: string }[] = [
   { label: "WordReference", url: "https://www.wordreference.com/" },
 ];
 
+/** Page d’accueil : Finance — Marchés, TCF Canada (compte à rebours, épreuves, outils). */
 export default function Home() {
   return (
     <>

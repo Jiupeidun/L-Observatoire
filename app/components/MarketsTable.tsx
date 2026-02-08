@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { SHEETS_CSV_URL } from "./config";
+import { SHEETS_CSV_URL } from "../lib/config";
 
 export type MarketsTableProps = { csvUrl?: string };
 
-const REFRESH_INTERVAL_MS = 60 * 1000; // 60 secondes
+const REFRESH_INTERVAL_MS = 60 * 1000;
 
-// Colonnes dans l’ordre : Symbol (col 0), Price, Change %, Market Cap, YTD
+/** Colonnes affichées dans l’ordre : Symbol (col 0), Price, Change %, Market Cap, YTD. */
 const COL_ORDER: { key: string; index: number }[] = [
   { key: "Symbol", index: 0 },
   { key: "Price", index: 1 },
@@ -16,13 +16,13 @@ const COL_ORDER: { key: string; index: number }[] = [
   { key: "YTD", index: 4 },
 ];
 
-/** True si la cellule est vide ou "—" (à trier en dernier). */
+/** Vrai si la cellule est vide ou "—" (tri en dernier). */
 function isBlankCell(cell: string): boolean {
   const s = (cell ?? "").trim();
   return !s || s === "—";
 }
 
-/** Parse une cellule pour le tri : nombre (pourcentage, T/B) ou NaN si vide. */
+/** Parse une cellule pour le tri : nombre (%, T/B, etc.) ou NaN si vide. */
 function parseSortValue(key: string, cell: string): number {
   const s = (cell ?? "").trim().replace(/,/g, "");
   if (!s || s === "—") return NaN;
@@ -67,10 +67,12 @@ function isWeekend(): boolean {
   return d === 0 || d === 6; // dimanche ou samedi
 }
 
-const WEEKEND_OVERLAY_DELAY_MS = 5000; // Afficher les données au moins 5 s avant le verre dépoli le week-end
+/** Délai avant d’afficher le verre dépoli le week-end (données visibles 5 s d’abord). */
+const WEEKEND_OVERLAY_DELAY_MS = 5000;
 
 type SortDir = "asc" | "desc";
 
+/** Tableau des marchés (CSV) : tri par colonne, couleurs positif/négatif, overlay week-end. */
 export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTableProps) {
   const [rows, setRows] = useState<string[][]>([]);
   const [loading, setLoading] = useState(true);

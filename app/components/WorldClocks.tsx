@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { FlapDisplay, Presets } from "react-split-flap-effect";
 import "react-split-flap-effect/extras/themes.css";
 
+/** Fuseaux affichés : NY, London, HK. */
 const ZONES: { label: string; timeZone: string }[] = [
   { label: "NY", timeZone: "America/New_York" },
   { label: "London", timeZone: "Europe/London" },
@@ -34,6 +35,7 @@ const flapProps = {
   className: "worldClockFlap",
 };
 
+/** Horloges monde (affichage type flap HH:mm). */
 export default function WorldClocks() {
   const [mounted, setMounted] = useState(false);
   const [times, setTimes] = useState<Record<string, { hours: number; minutes: number }>>({});

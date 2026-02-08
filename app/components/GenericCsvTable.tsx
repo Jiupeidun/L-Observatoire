@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 
 const REFRESH_INTERVAL_MS = 60 * 1000;
 
+/** Parse une chaîne CSV (champs entre guillemets, virgules). */
 export function parseCSV(text: string): string[][] {
   const lines = text.trim().split(/\r?\n/);
   return lines.map((line) => {
@@ -46,6 +47,7 @@ export type GenericCsvTableProps = {
   columnColors?: (string | undefined)[];
 };
 
+/** Tableau CSV générique : chargement par URL ou données fournies, tri optionnel, couleurs par colonne. */
 export default function GenericCsvTable({
   csvUrl,
   initialRows,

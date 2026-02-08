@@ -6,6 +6,7 @@ import "react-split-flap-effect/extras/themes.css";
 
 const EXAM_DATE = new Date("2026-04-09T00:00:00");
 
+/** Calcule le temps restant jusqu'à la date d'examen (ou dépassé). */
 function getTimeLeft() {
   const now = new Date();
   const diff = EXAM_DATE.getTime() - now.getTime();
@@ -33,6 +34,7 @@ function pad4(n: number) {
   return n.toString().padStart(4, "0");
 }
 
+/** Heure actuelle (jour, mois, année, H, min, s). */
 function getCurrentTime() {
   const d = new Date();
   return {
@@ -44,6 +46,10 @@ function getCurrentTime() {
     seconds: d.getSeconds(),
   };
 }
+
+/** Valeurs initiales identiques SSR/client pour éviter le mismatch d'hydratation (aria-label). */
+const INITIAL_LEFT = { days: 0, hours: 0, minutes: 0, seconds: 0, passed: false };
+const INITIAL_NOW = { day: 1, month: 1, year: 2025, hours: 0, minutes: 0, seconds: 0 };
 
 const flapProps2 = {
   chars: Presets.NUM as string,
@@ -61,12 +67,15 @@ const flapProps4 = {
   className: "countdownFlapDisplay",
 };
 
+/** Compte à rebours TCF Canada (style tableau d'aéroport). */
 export default function Countdown() {
   const [mounted, setMounted] = useState(false);
-  const [left, setLeft] = useState(getTimeLeft());
-  const [now, setNow] = useState(getCurrentTime());
+  const [left, setLeft] = useState(INITIAL_LEFT);
+  const [now, setNow] = useState(INITIAL_NOW);
 
   useEffect(() => {
+    setLeft(getTimeLeft());
+    setNow(getCurrentTime());
     setMounted(true);
     const t = setInterval(() => {
       setLeft(getTimeLeft());

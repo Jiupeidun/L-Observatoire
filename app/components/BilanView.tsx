@@ -1,12 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { INVESTMENT_CSV_URL } from "./config";
+import { INVESTMENT_CSV_URL } from "../lib/config";
 import { parseCSV } from "./GenericCsvTable";
 import GenericCsvTable from "./GenericCsvTable";
 
 const REFRESH_INTERVAL_MS = 60 * 1000;
 
+/** Couleurs par colonne Bilan : K, X, P, BST, VA, GA. */
 const BILAN_COLUMN_COLORS: (string | undefined)[] = [
   undefined,
   "#7399C6",
@@ -17,6 +18,7 @@ const BILAN_COLUMN_COLORS: (string | undefined)[] = [
   "#2E3192",
 ];
 
+/** Vue Bilan : tableau investissement (CSV), pas de tri, couleurs par colonne. */
 export default function BilanView() {
   const [rows, setRows] = useState<string[][]>([]);
   const [loading, setLoading] = useState(true);

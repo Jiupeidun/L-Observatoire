@@ -1,4 +1,8 @@
-/* Style minimaliste façon Apple — thème clair uniquement */
+/**
+ * Styles globaux — L’Observatoire
+ * Thème clair/sombre, grille, panneaux (Finance, TCF Canada), tableaux, compte à rebours.
+ */
+/* Variables : thème clair (style minimaliste façon Apple) */
 
 :root {
   --bg: #FFF1E5;
@@ -18,6 +22,8 @@
   --countdown-digit-bg: #e8e8ed;
   /* Police Apple : SF Pro sur macOS/iOS, Segoe UI sur Windows */
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Helvetica", "Segoe UI", sans-serif;
+  /* Hauteur minimale commune des en-têtes de panneau (Finance + TCF Canada) */
+  --panel-header-min-height: 3.5rem;
 }
 
 /* Mode sombre */
@@ -154,7 +160,11 @@ a:hover {
   font-size: 1.125rem;
   font-weight: 600;
   letter-spacing: -0.01em;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.5rem;
+  min-height: var(--panel-header-min-height);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
   color: var(--text);
   border-bottom: 1px solid var(--border);
   background: var(--card);
@@ -175,7 +185,9 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  padding: 1.25rem 1.5rem;
+  min-height: var(--panel-header-min-height);
+  box-sizing: border-box;
+  padding: 1rem 1.5rem;
   flex-shrink: 0;
   border-bottom: 1px solid var(--border);
   background: var(--card);
@@ -184,6 +196,7 @@ a:hover {
 .panelTitleRow .panelTitle {
   padding: 0;
   margin: 0;
+  min-height: 0;
   border-bottom: none;
 }
 
@@ -319,11 +332,11 @@ a:hover {
   margin-right: -20px;
 }
 
-/* Finance : lien Rapports + graphique Google Sheets */
+/* Lien Rapports financiers (Bilan) — même espacement que les autres blocs de lien */
 .reportsLinkSection {
   flex-shrink: 0;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--border);
   background: var(--card);
 }
 
@@ -570,6 +583,11 @@ a:hover {
   border-bottom: 1px solid var(--border);
 }
 
+/* Titre de panneau en premier enfant (ex. TCF Canada) : ne pas rétrécir */
+.panel > .panelTitle {
+  flex-shrink: 0;
+}
+
 /* Grille : heure à gauche, compte à rebours à droite */
 .countdownGrid {
   display: grid;
@@ -655,10 +673,10 @@ a:hover {
   font-family: var(--font);
 }
 
-/* Lien PDF TCF — compact, ouvre dans un nouvel onglet */
+/* Lien PDF TCF — même espacement que les autres blocs de lien */
 .pdfLinkSection {
   flex-shrink: 0;
-  padding: 0.75rem 1.5rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid var(--border);
   background: var(--card);
 }
@@ -675,11 +693,11 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Table TCF — épurée, occupe l’espace restant */
+/* Table TCF — épurée, occupe l’espace restant, même marge horizontale que le reste */
 .tableSection {
   flex: 1;
   min-height: 0;
-  padding: 1.25rem 1.5rem;
+  padding: 1rem 1.5rem;
   overflow: auto;
 }
 
@@ -731,7 +749,7 @@ a:hover {
   border-bottom: none;
 }
 
-/* Outils de préparation TCF — liens en bas du panneau */
+/* Outils de préparation TCF — liens en bas du panneau, même marge que pdfLinkSection */
 .tcfToolsSection {
   flex-shrink: 0;
   padding: 1rem 1.5rem;

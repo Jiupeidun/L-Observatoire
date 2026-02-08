@@ -2,6 +2,7 @@
 
 import { useTheme } from "./ThemeProvider";
 
+/** Icône soleil (mode clair). */
 function SunIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -23,6 +24,7 @@ function SunIcon({ className }: { className?: string }) {
   );
 }
 
+/** Icône lune (mode sombre). */
 function MoonIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -60,6 +62,7 @@ function getThemeButtonTitle(theme: "auto" | "light" | "dark", effectiveIsDark: 
   return "Mode jour. Cliquer : mode nuit";
 }
 
+/** Barre d’en-tête : titre et bouton de bascule thème. */
 export default function HeaderBar() {
   const { theme, effectiveTheme, setTheme } = useTheme();
   const effectiveIsDark = effectiveTheme === "dark";

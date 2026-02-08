@@ -1,10 +1,10 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 export type Theme = "light" | "dark" | "auto";
 
-/** 18:00–6:00 = 夜间，其余 = 日间 */
+/** 18h–6h = nuit, sinon = jour (pour le mode auto). */
 function isNightHour(): boolean {
   const hour = new Date().getHours();
   return hour >= 18 || hour < 6;
@@ -25,41 +25,39 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("auto");
-  const [effectiveTheme, setEffectiveTheme] = useState<"light" | "dark">("light");
   const [mounted, setMounted] = useState(false);
+  /** En mode auto, on force un re-render chaque minute pour recalculer jour/nuit. */
+  const [autoTick, setAutoTick] = useState(0);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  /** effectiveTheme dérivé au render : un seul setState au clic, pas de double rendu. */
+  const effectiveTheme = mounted ? getEffectiveTheme(theme) : "light";
+
   useEffect(() => {
     if (!mounted) return;
-    const effective = getEffectiveTheme(theme);
-    setEffectiveTheme(effective);
-    document.documentElement.setAttribute("data-theme", effective);
-  }, [theme, mounted]);
+    document.documentElement.setAttribute("data-theme", effectiveTheme);
+  }, [mounted, effectiveTheme]);
 
   useEffect(() => {
     if (!mounted || theme !== "auto") return;
-    const interval = setInterval(() => {
-      const next = getEffectiveTheme("auto");
-      setEffectiveTheme((prev) => {
-        if (prev !== next) {
-          document.documentElement.setAttribute("data-theme", next);
-          return next;
-        }
-        return prev;
-      });
-    }, 60 * 1000);
+    const interval = setInterval(() => setAutoTick((t) => t + 1), 60 * 1000);
     return () => clearInterval(interval);
   }, [theme, mounted]);
 
-  const setTheme = (next: Theme) => {
+  const setTheme = useCallback((next: Theme) => {
     setThemeState(next);
-  };
+  }, []);
+
+  const value = useMemo(
+    () => ({ theme, effectiveTheme, setTheme }),
+    [theme, effectiveTheme, setTheme]
+  );
 
   return (
-    <ThemeContext.Provider value={{ theme, effectiveTheme, setTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
@@ -67,6 +65,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+  if (!ctx) throw new Error("useTheme doit être utilisé dans un ThemeProvider");
   return ctx;
 }

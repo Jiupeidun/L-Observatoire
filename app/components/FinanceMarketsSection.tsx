@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { SHEETS_CSV_URL, SHEETS_CSV_URL_GROUPE_B } from "./config";
+import { SHEETS_CSV_URL, SHEETS_CSV_URL_GROUPE_B } from "../lib/config";
 import BilanView from "./BilanView";
 import MarketsTable from "./MarketsTable";
 import WorldClocks from "./WorldClocks";
@@ -19,6 +19,7 @@ const CSV_URL_BY_GROUP: Record<Group, string> = {
 
 type ViewMode = "markets" | "investment";
 
+/** Panneau Finance — Marchés : onglets Bilan / Marchés (Groupe A/B), horloges monde, tableau ou Bilan. */
 export default function FinanceMarketsSection() {
   const [group, setGroup] = useState<Group>("A");
   const [viewMode, setViewMode] = useState<ViewMode>("markets");
