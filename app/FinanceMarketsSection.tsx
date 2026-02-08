@@ -74,8 +74,10 @@ export default function FinanceMarketsSection() {
       </div>
       <div className="panelContent panelContentFinance">
         {viewMode === "markets" ? (
+          <MarketsTable csvUrl={csvUrl} />
+        ) : (
           <>
-            <MarketsTable csvUrl={csvUrl} />
+            <BilanView />
             <div className="reportsLinkSection">
               <a
                 href={ANNUAL_REPORTS_URL}
@@ -87,8 +89,6 @@ export default function FinanceMarketsSection() {
               </a>
             </div>
           </>
-        ) : (
-          <BilanView />
         )}
       </div>
     </>
