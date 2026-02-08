@@ -1,7 +1,7 @@
-import { TCF_EPREUVES_TABLE } from "./lib/config";
-import Countdown from "./components/Countdown";
-import FinanceMarketsSection from "./components/FinanceMarketsSection";
-import HeaderBar from "./components/HeaderBar";
+import { TCF_EPREUVES_TABLE } from "@/app/lib/config";
+import Countdown from "@/app/components/Countdown";
+import FinanceMarketsSection from "@/app/components/FinanceMarketsSection";
+import HeaderBar from "@/app/components/HeaderBar";
 
 const PDF_URL =
   `${process.env.NEXT_PUBLIC_BASE_PATH || ""}/tcf-canada-cheatsheets.pdf`;
