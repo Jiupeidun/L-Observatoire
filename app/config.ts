@@ -48,5 +48,9 @@ export const SHEETS_CSV_URL =
 export const SHEETS_CSV_URL_GROUPE_B =
   "https://docs.google.com/spreadsheets/d/e/2PACX-1vQr0wuiXC5YmOA9WmTS4N1ymmHrhRVhXkiF_kS0MPZ2d3zW_YhHrSfmzUXemf4ycZaE4pF2VK90vfbN/pub?gid=262160319&single=true&output=csv";
 
+// Tableur investissement (détails du système)
+export const INVESTMENT_CSV_URL =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vRuMvY2Ub0tHuOWi3-8dm0tqDDnvz-eGkakJeBxSO-fVCwmbLskwyHo2uvOaRh6MDh2pF2js-6HOjJ8/pub?gid=57745632&single=true&output=csv";
+
 // Date de la prochaine épreuve TCF Canada (pour le compte à rebours)
 export const TCF_EXAM_DATE = "2026-04-09";

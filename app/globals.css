@@ -52,6 +52,7 @@ body {
   overflow: hidden;
   font-family: var(--font);
   font-size: 15px;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: var(--bg);
@@ -191,6 +192,24 @@ a:hover {
   align-items: center;
   gap: 1rem;
   flex-shrink: 0;
+}
+
+.financeFlipBtn {
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.financeFlipBtn:hover {
+  color: var(--text);
+  background: var(--bg);
+  border-color: var(--text-secondary);
 }
 
 /* World clocks (NY, London, HK) — flap HH:mm */
@@ -461,6 +480,26 @@ a:hover {
   color: var(--color-positive);
   background: var(--color-positive-bg);
   text-align: center;
+}
+
+/* Bilan — table only */
+.bilanViewWrap {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.bilanViewWrap .bilanTableWrap {
+  flex: 0 0 auto;
+  overflow: auto;
+  min-height: 0;
+}
+
+.bilanViewWrap .marketsWrap {
+  flex: none;
+  min-height: 0;
 }
 
 /* Message week-end — sur le verre dépoli */

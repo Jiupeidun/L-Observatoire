@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { SHEETS_CSV_URL, SHEETS_CSV_URL_GROUPE_B } from "./config";
+import BilanView from "./BilanView";
 import MarketsTable from "./MarketsTable";
 import WorldClocks from "./WorldClocks";
 
@@ -16,8 +17,11 @@ const CSV_URL_BY_GROUP: Record<Group, string> = {
   B: SHEETS_CSV_URL_GROUPE_B,
 };
 
+type ViewMode = "markets" | "investment";
+
 export default function FinanceMarketsSection() {
   const [group, setGroup] = useState<Group>("A");
+  const [viewMode, setViewMode] = useState<ViewMode>("markets");
   const csvUrl = CSV_URL_BY_GROUP[group];
 
   return (
@@ -35,40 +39,57 @@ export default function FinanceMarketsSection() {
         </h2>
         <div className="panelTitleRowRight">
           <WorldClocks />
-          <div className="marketsTabs" role="tablist" aria-label="Groupe de données">
           <button
             type="button"
-            role="tab"
-            aria-selected={group === "A"}
-            className={group === "A" ? "marketsTabActive" : ""}
-            onClick={() => setGroup("A")}
+            className="financeFlipBtn"
+            onClick={() => setViewMode((v) => (v === "markets" ? "investment" : "markets"))}
+            title={viewMode === "markets" ? "Voir Bilan" : "Voir marchés"}
+            aria-label={viewMode === "markets" ? "Voir Bilan" : "Voir marchés"}
           >
-            Groupe A
+            {viewMode === "markets" ? "Bilan" : "Marchés"}
           </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={group === "B"}
-            className={group === "B" ? "marketsTabActive" : ""}
-            onClick={() => setGroup("B")}
-          >
-            Groupe B
-          </button>
-          </div>
+          {viewMode === "markets" && (
+            <div className="marketsTabs" role="tablist" aria-label="Groupe de données">
+              <button
+                type="button"
+                role="tab"
+                aria-selected={group === "A"}
+                className={group === "A" ? "marketsTabActive" : ""}
+                onClick={() => setGroup("A")}
+              >
+                Groupe A
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={group === "B"}
+                className={group === "B" ? "marketsTabActive" : ""}
+                onClick={() => setGroup("B")}
+              >
+                Groupe B
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className="panelContent panelContentFinance">
-        <MarketsTable csvUrl={csvUrl} />
-        <div className="reportsLinkSection">
-          <a
-            href={ANNUAL_REPORTS_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="pdfLink"
-          >
-            Rapports Financiers →
-          </a>
-        </div>
+        {viewMode === "markets" ? (
+          <>
+            <MarketsTable csvUrl={csvUrl} />
+            <div className="reportsLinkSection">
+              <a
+                href={ANNUAL_REPORTS_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="pdfLink"
+              >
+                Rapports Financiers →
+              </a>
+            </div>
+          </>
+        ) : (
+          <BilanView />
+        )}
       </div>
     </>
   );
