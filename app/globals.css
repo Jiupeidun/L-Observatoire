@@ -409,6 +409,16 @@ a:hover {
   font-family: var(--font);
 }
 
+/* Finance — Marchés / Bilan : tableau plus lisible */
+.panelContentFinance .marketsTable {
+  font-size: 0.9375rem;
+}
+
+.panelContentFinance .marketsTable th,
+.panelContentFinance .marketsTable td {
+  font-weight: 600;
+}
+
 .marketsTable th,
 .marketsTable td {
   padding: 0.5rem 0.75rem;
@@ -500,6 +510,11 @@ a:hover {
 .bilanViewWrap .marketsWrap {
   flex: none;
   min-height: 0;
+}
+
+.bilanViewWrap .marketsTable th,
+.bilanViewWrap .marketsTable td {
+  text-align: center;
 }
 
 /* Message week-end — sur le verre dépoli */

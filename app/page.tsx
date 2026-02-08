@@ -11,6 +11,7 @@ const TCF_TOOLS: { label: string; url: string }[] = [
   { label: "Gemini", url: "https://gemini.google.com/app" },
   { label: "Luvvoice", url: "https://luvvoice.com/" },
   { label: "Google Translate", url: "https://translate.google.com/" },
+  { label: "WordReference", url: "https://www.wordreference.com/" },
 ];
 
 export default function Home() {
