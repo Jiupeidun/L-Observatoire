@@ -62,23 +62,13 @@ function parseCSV(text: string): string[][] {
   });
 }
 
-function isWeekend(): boolean {
-  const d = new Date().getDay();
-  return d === 0 || d === 6; // dimanche ou samedi
-}
-
-/** Délai avant d’afficher le verre dépoli le week-end (données visibles 5 s d’abord). */
-const WEEKEND_OVERLAY_DELAY_MS = 5000;
-
 type SortDir = "asc" | "desc";
 
-/** Tableau des marchés (CSV) : tri par colonne, couleurs positif/négatif, overlay week-end. */
+/** Tableau des marchés (CSV) : tri par colonne, couleurs positif/négatif. */
 export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTableProps) {
   const [rows, setRows] = useState<string[][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [weekend, setWeekend] = useState(false);
-  const [weekendOverlayVisible, setWeekendOverlayVisible] = useState(false);
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("desc");
 
@@ -92,7 +82,6 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
   };
 
   const fetchData = useCallback(() => {
-    setWeekend(isWeekend());
     fetch(csvUrl)
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -114,24 +103,10 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
   useEffect(() => {
     setRows([]);
     setLoading(true);
-    const w = isWeekend();
-    setWeekend(w);
-    if (!w) setWeekendOverlayVisible(false);
     fetchData();
     const t = setInterval(fetchData, REFRESH_INTERVAL_MS);
     return () => clearInterval(t);
   }, [fetchData]);
-
-  // Week-end : afficher les données 5 s puis le verre dépoli + message
-  useEffect(() => {
-    if (!weekend) return;
-    setWeekendOverlayVisible(false);
-    const t = setTimeout(() => setWeekendOverlayVisible(true), WEEKEND_OVERLAY_DELAY_MS);
-    return () => clearTimeout(t);
-  }, [weekend]);
-
-  const weekendMode = weekend;
-  const showGlass = weekendMode && weekendOverlayVisible;
 
   const dataRows = rows.length >= 2 ? rows.slice(1) : [];
   const hasData = rows.length >= 2;
@@ -160,7 +135,7 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
     });
   }, [dataRows, sortBy, sortDir]);
 
-  if (loading && rows.length === 0 && !weekendMode) {
+  if (loading && rows.length === 0) {
     return (
       <div className="marketsWrap">
         <div className="marketsLoading">Chargement des données…</div>
@@ -168,7 +143,7 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
     );
   }
 
-  if (error && rows.length === 0 && !weekendMode) {
+  if (error && rows.length === 0) {
     return (
       <div className="marketsWrap">
         <div className="marketsError">Impossible de charger les données : {error}</div>
@@ -184,7 +159,7 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
             Dernière mise à jour échouée, nouvel essai dans 1 min.
           </div>
         )}
-        {!hasData && !weekendMode && (
+        {!hasData && (
           <div className="marketsEmpty">Aucune donnée.</div>
         )}
         {hasData && (
@@ -250,17 +225,6 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
             </table>
           </div>
         )}
-      </div>
-
-      {/* Verre dépoli week-end + message : au-dessus des données marchés */}
-      <div
-        className={`weekendGlass ${showGlass ? "weekendGlassVisible" : ""}`}
-        aria-hidden={!showGlass}
-      >
-        <div className="weekendMessageInner">
-          <p className="weekendText">Aujourd&apos;hui c&apos;est le week-end — repose-toi bien !</p>
-          <p className="weekendSub">Les marchés peuvent attendre.</p>
-        </div>
       </div>
     </div>
   );

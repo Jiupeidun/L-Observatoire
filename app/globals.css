@@ -17,8 +17,6 @@
   --color-positive: #c53929;
   --color-negative: #0d7d3d;
   --color-positive-bg: rgba(197, 57, 41, 0.08);
-  --weekend-glass-bg: rgba(255, 255, 255, 0.28);
-  --weekend-glass-border: rgba(255, 255, 255, 0.4);
   --countdown-digit-bg: #e8e8ed;
   /* Police Apple : SF Pro sur macOS/iOS, Segoe UI sur Windows */
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Helvetica Neue", "Helvetica", "Segoe UI", sans-serif;
@@ -39,8 +37,6 @@
   --color-positive: #ff6b6b;
   --color-negative: #32d74b;
   --color-positive-bg: rgba(255, 107, 107, 0.15);
-  --weekend-glass-bg: rgba(44, 44, 46, 0.72);
-  --weekend-glass-border: rgba(255, 255, 255, 0.15);
   --countdown-digit-bg: #3a3a3c;
 }
 
@@ -359,40 +355,6 @@ a:hover {
   flex-direction: column;
 }
 
-/* Verre dépoli week-end — fond très transparent pour que le blur se voie bien */
-.weekendGlass {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.5s ease;
-  z-index: 10;
-  isolation: isolate;
-  /* Fond peu couvrant pour que le flou derrière soit bien visible */
-  background: var(--weekend-glass-bg);
-  -webkit-backdrop-filter: saturate(140%) blur(12px);
-  backdrop-filter: saturate(140%) blur(12px);
-  box-shadow: inset 0 0 0 1px var(--weekend-glass-border);
-}
-
-.weekendGlass.weekendGlassVisible {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Au survol de la zone marchés, le verre dépoli disparaît pour laisser voir le tableau */
-.marketsWrap:hover .weekendGlass.weekendGlassVisible {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.weekendGlass .weekendMessageInner {
-  position: relative;
-}
-
 .marketsScroll {
   flex: 1;
   overflow: auto;
@@ -528,41 +490,6 @@ a:hover {
 .bilanViewWrap .marketsTable th,
 .bilanViewWrap .marketsTable td {
   text-align: center;
-}
-
-/* Message week-end — sur le verre dépoli */
-.weekendMessageInner {
-  padding: 1.5rem;
-  text-align: center;
-}
-
-.weekendGlassVisible .weekendMessageInner {
-  animation: weekendPop 0.4s cubic-bezier(0.34, 1.2, 0.64, 1) both;
-}
-
-@keyframes weekendPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.92);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.weekendText {
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  color: var(--text);
-  margin: 0 0 0.25rem;
-}
-
-.weekendSub {
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-  margin: 0;
 }
 
 /* Compte à rebours TCF — style tableau d'aéroport (noir & blanc) */
