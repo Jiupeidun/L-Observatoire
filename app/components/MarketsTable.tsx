@@ -3,18 +3,28 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { SHEETS_CSV_URL } from "../lib/config";
 
-export type MarketsTableProps = { csvUrl?: string };
+export type ColOrderItem = { key: string; index: number };
+
+export type MarketsTableProps = {
+  csvUrl?: string;
+  /** Ordre des colonnes (clé + index). Si absent, utilise Symbol, Price, Change %, Market Cap, YTD. */
+  colOrder?: ColOrderItem[];
+  /** Clés des colonnes numériques à colorer (positif = rouge, négatif = vert). */
+  numericKeysWithColor?: Set<string> | string[];
+};
 
 const REFRESH_INTERVAL_MS = 60 * 1000;
 
-/** Colonnes affichées dans l’ordre : Symbol (col 0), Price, Change %, Market Cap, YTD. */
-const COL_ORDER: { key: string; index: number }[] = [
+/** Colonnes par défaut (Groupe A/B) : Symbol, Price, Change %, Market Cap, YTD. */
+const COL_ORDER_DEFAULT: { key: string; index: number }[] = [
   { key: "Symbol", index: 0 },
   { key: "Price", index: 1 },
   { key: "Change %", index: 2 },
   { key: "Market Cap", index: 3 },
   { key: "YTD", index: 4 },
 ];
+
+const NUMERIC_KEYS_WITH_COLOR_DEFAULT = new Set(["Change %", "YTD"]);
 
 /** Vrai si la cellule est vide ou "—" (tri en dernier). */
 function isBlankCell(cell: string): boolean {
@@ -37,8 +47,6 @@ function parseSortValue(key: string, cell: string): number {
   }
   return num;
 }
-
-const NUMERIC_KEYS_WITH_COLOR = new Set(["Change %", "YTD"]);
 
 function parseCSV(text: string): string[][] {
   const lines = text.trim().split(/\r?\n/);
@@ -65,7 +73,17 @@ function parseCSV(text: string): string[][] {
 type SortDir = "asc" | "desc";
 
 /** Tableau des marchés (CSV) : tri par colonne, couleurs positif/négatif. */
-export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTableProps) {
+export default function MarketsTable({
+  csvUrl = SHEETS_CSV_URL,
+  colOrder: colOrderProp,
+  numericKeysWithColor: numericKeysWithColorProp,
+}: MarketsTableProps) {
+  const colOrder = colOrderProp ?? COL_ORDER_DEFAULT;
+  const numericKeysWithColor =
+    numericKeysWithColorProp instanceof Set
+      ? numericKeysWithColorProp
+      : new Set(numericKeysWithColorProp ?? NUMERIC_KEYS_WITH_COLOR_DEFAULT);
+
   const [rows, setRows] = useState<string[][]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -113,9 +131,9 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
 
   const sortedRows = useMemo(() => {
     if (!sortBy || !dataRows.length) return dataRows;
-    const col = COL_ORDER.find((c) => c.key === sortBy);
+    const col = colOrder.find((c) => c.key === sortBy);
     if (!col) return dataRows;
-    const isNum = col.key !== "Symbol";
+    const isNumSort = ["Price", "Change %", "Market Cap", "YTD", "Current", "ATH", "Drawdown from ATH", "ATH Date to today", "5Y return"].includes(col.key);
     return [...dataRows].sort((a, b) => {
       const aVal = a[col.index] ?? "";
       const bVal = b[col.index] ?? "";
@@ -124,7 +142,7 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
       if (aBlank && bBlank) return 0;
       if (aBlank) return 1;
       if (bBlank) return -1;
-      if (isNum) {
+      if (isNumSort) {
         const aNum = parseSortValue(col.key, aVal);
         const bNum = parseSortValue(col.key, bVal);
         const cmp = aNum - bNum;
@@ -133,7 +151,7 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
       const cmp = String(aVal).localeCompare(String(bVal), undefined, { numeric: true });
       return sortDir === "desc" ? -cmp : cmp;
     });
-  }, [dataRows, sortBy, sortDir]);
+  }, [dataRows, sortBy, sortDir, colOrder]);
 
   if (loading && rows.length === 0) {
     return (
@@ -167,7 +185,7 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
             <table className="marketsTable">
               <thead>
                 <tr>
-                  {COL_ORDER.map(({ key }) => (
+                  {colOrder.map(({ key }) => (
                     <th
                       key={key}
                       className="marketsThSortable"
@@ -199,11 +217,11 @@ export default function MarketsTable({ csvUrl = SHEETS_CSV_URL }: MarketsTablePr
               <tbody>
                 {sortedRows.map((row, i) => (
                   <tr key={i}>
-                    {COL_ORDER.map(({ key, index: j }) => {
+                    {colOrder.map(({ key, index: j }) => {
                       const cell = row[j] ?? "";
                       const display = cell || "—";
                       let dataSign: "positive" | "negative" | undefined;
-                      if (NUMERIC_KEYS_WITH_COLOR.has(key)) {
+                      if (numericKeysWithColor.has(key)) {
                         const n = parseSortValue(key, cell);
                         if (!Number.isNaN(n)) {
                           dataSign = n > 0 ? "positive" : n < 0 ? "negative" : undefined;

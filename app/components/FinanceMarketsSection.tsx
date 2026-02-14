@@ -1,21 +1,35 @@
 "use client";
 
-import { useState } from "react";
-import { SHEETS_CSV_URL, SHEETS_CSV_URL_GROUPE_B } from "../lib/config";
+import { useState, useMemo } from "react";
+import { SHEETS_CSV_URL, SHEETS_CSV_URL_GROUPE_B, SHEETS_CSV_URL_ATH } from "../lib/config";
 import BilanView from "./BilanView";
-import MarketsTable from "./MarketsTable";
+import MarketsTable, { type ColOrderItem } from "./MarketsTable";
 import WorldClocks from "./WorldClocks";
 
 const ANNUAL_REPORTS_URL = "https://jiupeidun.github.io/annualreports/";
 const TRADINGVIEW_CHART_URL =
   "https://www.tradingview.com/chart/tUkFEiQd/?symbol=SP%3ASPX";
 
-type Group = "A" | "B";
+type Group = "A" | "B" | "ATH";
 
 const CSV_URL_BY_GROUP: Record<Group, string> = {
   A: SHEETS_CSV_URL,
   B: SHEETS_CSV_URL_GROUPE_B,
+  ATH: SHEETS_CSV_URL_ATH,
 };
+
+/** Colonnes ATH : Ticker, Current, ATH, ATH Date, Drawdown from ATH, ATH Date to today, 5Y return */
+const ATH_COL_ORDER: ColOrderItem[] = [
+  { key: "Ticker", index: 0 },
+  { key: "Current", index: 1 },
+  { key: "ATH", index: 2 },
+  { key: "ATH Date", index: 3 },
+  { key: "Drawdown from ATH", index: 4 },
+  { key: "ATH Date to today", index: 5 },
+  { key: "5Y return", index: 6 },
+];
+
+const ATH_NUMERIC_KEYS_WITH_COLOR = ["Drawdown from ATH", "5Y return"];
 
 type ViewMode = "markets" | "investment";
 
@@ -24,6 +38,14 @@ export default function FinanceMarketsSection() {
   const [group, setGroup] = useState<Group>("A");
   const [viewMode, setViewMode] = useState<ViewMode>("markets");
   const csvUrl = CSV_URL_BY_GROUP[group];
+  const isAth = group === "ATH";
+  const marketsTableProps = useMemo(
+    () =>
+      isAth
+        ? { csvUrl, colOrder: ATH_COL_ORDER, numericKeysWithColor: ATH_NUMERIC_KEYS_WITH_COLOR }
+        : { csvUrl },
+    [csvUrl, isAth]
+  );
 
   return (
     <>
@@ -69,13 +91,22 @@ export default function FinanceMarketsSection() {
               >
                 Groupe B
               </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={group === "ATH"}
+                className={group === "ATH" ? "marketsTabActive" : ""}
+                onClick={() => setGroup("ATH")}
+              >
+                ATH
+              </button>
             </div>
           )}
         </div>
       </div>
       <div className="panelContent panelContentFinance">
         {viewMode === "markets" ? (
-          <MarketsTable csvUrl={csvUrl} />
+          <MarketsTable {...marketsTableProps} />
         ) : (
           <>
             <BilanView />
