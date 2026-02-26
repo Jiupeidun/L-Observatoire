@@ -11,6 +11,7 @@ function isNightHour(): boolean {
 }
 
 function getEffectiveTheme(theme: Theme): "light" | "dark" {
+  // On force le thème jour par défaut ; le mode auto reste disponible mais n’est pas utilisé par défaut.
   if (theme === "auto") return isNightHour() ? "dark" : "light";
   return theme;
 }
@@ -24,7 +25,8 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("auto");
+  // Thème par défaut : jour (mode clair permanent tant que l’utilisateur ne change pas).
+  const [theme, setThemeState] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
   /** En mode auto, on force un re-render chaque minute pour recalculer jour/nuit. */
   const [autoTick, setAutoTick] = useState(0);
