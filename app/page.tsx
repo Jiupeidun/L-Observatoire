@@ -17,7 +17,10 @@ const TCF_TOOLS: { label: string; url: string }[] = [
 
 /** Page d’accueil : Finance — Marchés (colonne gauche), outils de français + TCF Canada (colonne droite). */
 export default function Home() {
-  const showTcf = new Date() < new Date(`${TCF_EXAM_DATE}T00:00:00Z`);
+  const now = new Date();
+  const showTcf = now < new Date(`${TCF_EXAM_DATE}T00:00:00Z`);
+  const day = now.getDay(); // 0 = dimanche, 6 = samedi
+  const isWeekend = day === 0 || day === 6;
   return (
     <>
       <HeaderBar />
@@ -82,23 +85,33 @@ export default function Home() {
                     </thead>
                     <tbody>
                       {TCF_EPREUVES_TABLE.map(
-                        ({ part, url, duree, details, scoreRequis, echelle }) => (
-                          <tr key={part}>
-                            <td>
-                              <a
-                                href={url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {part} →
-                              </a>
-                            </td>
-                            <td>{duree}</td>
-                            <td className="tcfDetailsCell">{details}</td>
-                            <td>{scoreRequis}</td>
-                            <td>{echelle}</td>
-                          </tr>
-                        ),
+                        ({ part, url, duree, details, scoreRequis, echelle }) => {
+                          const isExpression = part.startsWith("Expression ");
+                          const disabled = isWeekend ? !isExpression : isExpression;
+                          const rowClass = disabled ? "tcfRowDisabled" : undefined;
+                          const link = disabled ? (
+                            <span className="tcfLinkDisabled" aria-disabled="true">
+                              {part} →
+                            </span>
+                          ) : (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              {part} →
+                            </a>
+                          );
+                          return (
+                            <tr key={part} className={rowClass}>
+                              <td>{link}</td>
+                              <td>{duree}</td>
+                              <td className="tcfDetailsCell">{details}</td>
+                              <td>{scoreRequis}</td>
+                              <td>{echelle}</td>
+                            </tr>
+                          );
+                        },
                       )}
                     </tbody>
                   </table>

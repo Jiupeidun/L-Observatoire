@@ -696,6 +696,19 @@ a:hover {
   border-bottom: none;
 }
 
+/* Mise en avant des épreuves actives / inactives (semaine vs week-end). */
+.tcfRowDisabled {
+  opacity: 0.45;
+}
+
+.tcfLinkDisabled {
+  display: inline-block;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: default;
+  text-decoration: none;
+}
+
 /* Outils pratiques de français — bloc compact en haut de la colonne droite */
 .tcfToolsSection {
   flex-shrink: 0;
