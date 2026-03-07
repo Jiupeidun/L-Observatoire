@@ -150,6 +150,28 @@ a:hover {
 }
 
 /* En haut : Outils pratiques — hauteur naturelle (contenu) */
+/* Badge opération — petit libellé au-dessus du titre */
+.operationBadge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+  padding: 0.5rem 1.5rem 0;
+  flex-shrink: 0;
+}
+
+.operationHint {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+  padding: 1rem 1.5rem;
+}
+
+.panelJob {
+  flex: 0 0 auto;
+}
+
 .panelLangTools {
   flex: 0 0 auto;
 }

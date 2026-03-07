@@ -15,25 +15,48 @@ const TCF_TOOLS: { label: string; url: string }[] = [
   { label: "WordReference", url: "https://www.wordreference.com/" },
 ];
 
-/** Page d’accueil : Finance — Marchés (colonne gauche), outils de français + TCF Canada (colonne droite). */
+/** Trois actions personnelles — titres français + codes d’opération. */
+const OPERATIONS = {
+  french: { code: "Operation Enduring Freedom", title: "Apprentissage du français" },
+  job: { code: "Operation Silent Resolute", title: "Changement d'emploi 2026" },
+  market: { code: "Operation Relentless Strike", title: "Investissement boursier US" },
+} as const;
+
+/** Page d’accueil : trois opérations (français, emploi 2026, marchés). */
 export default function Home() {
   const now = new Date();
   const showTcf = now < new Date(`${TCF_EXAM_DATE}T00:00:00Z`);
-  const day = now.getDay(); // 0 = dimanche, 6 = samedi
+  const day = now.getDay();
   const isWeekend = day === 0 || day === 6;
   return (
     <>
       <HeaderBar />
 
       <main className="main">
-        {/* Colonne gauche : Finance — Marchés */}
+        {/* Colonne gauche : Operation Relentless Strike — Marchés */}
         <section className="panel panelFinance">
+          <div className="operationBadge" title={OPERATIONS.market.title}>
+            {OPERATIONS.market.code}
+          </div>
           <FinanceMarketsSection />
         </section>
 
-        {/* Colonne droite : outils + TCF Canada empilés */}
+        {/* Colonne droite : Silent Resolute + Enduring Freedom */}
         <div className="rightColumn">
+          <section className="panel panelJob">
+            <div className="operationBadge" title={OPERATIONS.job.title}>
+              {OPERATIONS.job.code}
+            </div>
+            <h2 className="panelTitle">{OPERATIONS.job.title}</h2>
+            <div className="panelContent">
+              <p className="operationHint">Objectif 2026 — préparation en cours.</p>
+            </div>
+          </section>
+
           <section className="panel panelLangTools">
+            <div className="operationBadge" title={OPERATIONS.french.title}>
+              {OPERATIONS.french.code}
+            </div>
             <h2 className="panelTitle">Outils pratiques</h2>
             <div className="panelContent">
               <div className="tcfToolsSection">
@@ -57,6 +80,9 @@ export default function Home() {
 
           {showTcf && (
             <section className="panel panelTcf">
+              <div className="operationBadge" title={OPERATIONS.french.title}>
+                {OPERATIONS.french.code}
+              </div>
               <h2 className="panelTitle">TCF Canada</h2>
               <div className="panelContent">
                 <div className="countdownWrap">
